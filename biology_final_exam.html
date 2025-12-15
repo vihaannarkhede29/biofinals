@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Final Exam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .flagged-panel {
+            width: 250px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .flagged-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .flagged-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .flagged-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .flagged-item:hover {
+            background: #fff3cd;
+            border-color: #ff9800;
+        }
+
+        .flagged-item.current {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .no-flagged {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .timer.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .timer.danger {
+            background: #f8d7da;
+            color: #721c24;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .flag-btn {
+            background: transparent;
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .flag-btn:hover {
+            background: #fff3cd;
+        }
+
+        .flag-btn.flagged {
+            background: #ffc107;
+            color: white;
+        }
+
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #dee2e6;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .btn-submit {
+            background: #28a745;
+            color: white;
+            padding: 15px 50px;
+            font-size: 18px;
+        }
+
+        .btn-submit:hover {
+            background: #218838;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .results-summary {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 5px solid #dee2e6;
+        }
+
+        .summary-item.correct {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .summary-item.incorrect {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .summary-item.unanswered {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .summary-question-num {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .summary-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .summary-status.correct {
+            background: #28a745;
+            color: white;
+        }
+
+        .summary-status.incorrect {
+            background: #dc3545;
+            color: white;
+        }
+
+        .summary-status.unanswered {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .summary-question-text {
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .summary-answer {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .summary-answer-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .summary-answer.user {
+            background: #e9ecef;
+        }
+
+        .summary-answer.correct {
+            background: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <h1>Biology Final Exam</h1>
+                <div class="timer" id="timer">60:00</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+            </div>
+
+            <div id="exam-content">
+                <div class="question-container" id="question-container"></div>
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()">Previous</button>
+                    <span id="question-counter">Question 1 of 90</span>
+                    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next</button>
+                </div>
+                <div class="submit-section">
+                    <button class="btn btn-submit" id="submit-btn" onclick="submitExam()">Submit Exam</button>
+                </div>
+            </div>
+
+            <div class="results" id="results">
+                <h2>Exam Complete</h2>
+                <div class="score" id="score"></div>
+                <p id="score-text"></p>
+                <div class="results-summary" id="results-summary"></div>
+            </div>
+        </div>
+
+        <div class="flagged-panel">
+            <h3>📌 Flagged Questions</h3>
+            <div class="flagged-list" id="flagged-list">
+                <div class="no-flagged">No questions flagged yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which characteristic is shared by all living organisms?",
+                options: ["Sexual reproduction", "Photosynthesis", "Cellular organization", "Locomotion"],
+                correct: 2
+            },
+            {
+                question: "A scientific theory differs from a hypothesis because a theory:",
+                options: ["Is a guess", "Is untestable", "Is supported by extensive evidence", "Is always proven"],
+                correct: 2
+            },
+            {
+                question: "In an experiment, the variable intentionally changed is the:",
+                options: ["Dependent variable", "Independent variable", "Controlled variable", "Constant"],
+                correct: 1
+            },
+            {
+                question: "Which subatomic particle determines an element's identity?",
+                options: ["Electron", "Neutron", "Proton", "Ion"],
+                correct: 2
+            },
+            {
+                question: "A covalent bond is formed when atoms:",
+                options: ["Transfer electrons", "Share electrons", "Lose protons", "Share neutrons"],
+                correct: 1
+            },
+            {
+                question: "Water's ability to resist temperature change is due to:",
+                options: ["Polarity", "Ionic bonds", "Hydrogen bonds", "High density"],
+                correct: 2
+            },
+            {
+                question: "Which property of water explains capillary action in plants?",
+                options: ["Cohesion", "Adhesion", "Density", "pH"],
+                correct: 1
+            },
+            {
+                question: "A solution with pH 2 is how much more acidic than pH 5?",
+                options: ["3×", "10×", "100×", "1000×"],
+                correct: 3
+            },
+            {
+                question: "Carbon can form diverse molecules because it:",
+                options: ["Is radioactive", "Has four valence electrons", "Is highly polar", "Forms ionic bonds"],
+                correct: 1
+            },
+            {
+                question: "Which functional group gives molecules acidic properties?",
+                options: ["Amino", "Hydroxyl", "Carboxyl", "Phosphate"],
+                correct: 2
+            },
+            {
+                question: "Isomers are molecules that:",
+                options: ["Have different formulas", "Have the same formula but different structures", "Are mirror images only", "Are inorganic"],
+                correct: 1
+            },
+            {
+                question: "Which macromolecule stores hereditary information?",
+                options: ["Protein", "Lipid", "Carbohydrate", "Nucleic acid"],
+                correct: 3
+            },
+            {
+                question: "Dehydration synthesis results in:",
+                options: ["Monomer breakdown", "Polymer formation", "Protein denaturation", "ATP hydrolysis"],
+                correct: 1
+            },
+            {
+                question: "Hydrolysis breaks polymers by:",
+                options: ["Removing water", "Adding water", "Removing enzymes", "Adding ATP"],
+                correct: 1
+            },
+            {
+                question: "Which polysaccharide is used for energy storage in animals?",
+                options: ["Cellulose", "Starch", "Glycogen", "Chitin"],
+                correct: 2
+            },
+            {
+                question: "Saturated fats are solid at room temperature because they:",
+                options: ["Contain double bonds", "Have straight chains", "Are polar", "Are phospholipids"],
+                correct: 1
+            },
+            {
+                question: "The main component of cell membranes is:",
+                options: ["Triglycerides", "Steroids", "Phospholipids", "Waxes"],
+                correct: 2
+            },
+            {
+                question: "Enzymes function by:",
+                options: ["Increasing reaction temperature", "Increasing product energy", "Lowering activation energy", "Breaking ATP"],
+                correct: 2
+            },
+            {
+                question: "Competitive inhibitors reduce enzyme activity by:",
+                options: ["Destroying enzymes", "Binding outside the active site", "Competing for the active site", "Changing pH"],
+                correct: 2
+            },
+            {
+                question: "Primary protein structure is determined by:",
+                options: ["Hydrogen bonding", "Amino acid sequence", "R-group interactions", "Peptide folding"],
+                correct: 1
+            },
+            {
+                question: "Protein denaturation causes:",
+                options: ["Increased activity", "Loss of shape", "New peptide bonds", "DNA synthesis"],
+                correct: 1
+            },
+            {
+                question: "Enzymes are typically:",
+                options: ["Fibrous proteins", "Globular proteins", "Lipids", "Nucleic acids"],
+                correct: 1
+            },
+            {
+                question: "Benedict's test detects:",
+                options: ["Lipids", "Proteins", "Reducing sugars", "Starch"],
+                correct: 2
+            },
+            {
+                question: "Amylase digests:",
+                options: ["Lipids", "Proteins", "Starch", "DNA"],
+                correct: 2
+            },
+            {
+                question: "Essential amino acids:",
+                options: ["Are made by the body", "Must be consumed", "Are toxic", "Are nonpolar"],
+                correct: 1
+            },
+            {
+                question: "DNA differs from RNA because DNA:",
+                options: ["Is single-stranded", "Contains uracil", "Contains thymine", "Uses ribose"],
+                correct: 2
+            },
+            {
+                question: "Complementary base pairing allows DNA to:",
+                options: ["Translate proteins", "Replicate accurately", "Form enzymes", "Store ATP"],
+                correct: 1
+            },
+            {
+                question: "The genetic code being universal suggests:",
+                options: ["Mutation rates", "Abiogenesis", "Common ancestry", "Natural selection only"],
+                correct: 2
+            },
+            {
+                question: "Lipids are best for long-term energy storage because they:",
+                options: ["Are polar", "Store more energy per gram", "Dissolve in water", "Are enzymes"],
+                correct: 1
+            },
+            {
+                question: "Organic compounds always contain:",
+                options: ["Oxygen", "Hydrogen", "Carbon", "Nitrogen"],
+                correct: 2
+            },
+            {
+                question: "Early Earth's atmosphere lacked:",
+                options: ["Methane", "Hydrogen", "Oxygen", "Water vapor"],
+                correct: 2
+            },
+            {
+                question: "The Miller-Urey experiment showed that:",
+                options: ["Cells formed spontaneously", "Organic molecules could form abiotically", "DNA formed first", "Life requires oxygen"],
+                correct: 1
+            },
+            {
+                question: "The first genetic material was likely:",
+                options: ["DNA", "Protein", "RNA", "Lipid"],
+                correct: 2
+            },
+            {
+                question: "Cells are considered the smallest unit of life because they:",
+                options: ["Contain DNA", "Are self-sustaining", "Perform metabolism", "All of the above"],
+                correct: 3
+            },
+            {
+                question: "Which domain includes extremophiles?",
+                options: ["Bacteria", "Eukarya", "Archaea", "Protista"],
+                correct: 2
+            },
+            {
+                question: "Prokaryotes differ from eukaryotes because they:",
+                options: ["Have ribosomes", "Lack membrane-bound organelles", "Have DNA", "Perform metabolism"],
+                correct: 1
+            },
+            {
+                question: "The human microbiome is important because it:",
+                options: ["Causes disease", "Aids digestion and immunity", "Produces ATP", "Forms tissues"],
+                correct: 1
+            },
+            {
+                question: "Cocci bacteria are:",
+                options: ["Rod-shaped", "Spiral", "Spherical", "Filamentous"],
+                correct: 2
+            },
+            {
+                question: "Endospores allow bacteria to:",
+                options: ["Reproduce rapidly", "Exchange DNA", "Survive harsh conditions", "Move faster"],
+                correct: 2
+            },
+            {
+                question: "Biofilms are dangerous because they:",
+                options: ["Increase metabolism", "Resist antibiotics", "Reduce mutation", "Kill bacteria"],
+                correct: 1
+            },
+            {
+                question: "Endotoxins are:",
+                options: ["Secreted proteins", "Lipopolysaccharides in cell walls", "DNA fragments", "Enzymes"],
+                correct: 1
+            },
+            {
+                question: "The cell theory states that:",
+                options: ["Cells arise from nonliving matter", "All cells come from preexisting cells", "Cells are identical", "Cells lack DNA"],
+                correct: 1
+            },
+            {
+                question: "The endosymbiotic theory explains the origin of:",
+                options: ["Ribosomes", "Nuclei", "Mitochondria and chloroplasts", "Cell membranes"],
+                correct: 2
+            },
+            {
+                question: "Multicellularity provides organisms with:",
+                options: ["Slower reproduction", "Cellular specialization", "Reduced efficiency", "Fewer genes"],
+                correct: 1
+            },
+            {
+                question: "Which microscope uses light?",
+                options: ["Electron microscope", "Compound light microscope", "Scanning microscope", "Confocal only"],
+                correct: 1
+            },
+            {
+                question: "Plant cells differ from animal cells because they have:",
+                options: ["Ribosomes", "Mitochondria", "Cell walls", "Nuclei"],
+                correct: 2
+            },
+            {
+                question: "The nucleus functions to:",
+                options: ["Produce ATP", "Store DNA", "Digest waste", "Synthesize lipids"],
+                correct: 1
+            },
+            {
+                question: "Ribosomes are the site of:",
+                options: ["DNA replication", "Protein synthesis", "Lipid synthesis", "Photosynthesis"],
+                correct: 1
+            },
+            {
+                question: "The Golgi apparatus modifies and:",
+                options: ["Destroys proteins", "Packages proteins", "Replicates DNA", "Stores ATP"],
+                correct: 1
+            },
+            {
+                question: "Lysosomes function in:",
+                options: ["Protein synthesis", "Waste breakdown", "Photosynthesis", "Energy storage"],
+                correct: 1
+            },
+            {
+                question: "The fluid-mosaic model describes:",
+                options: ["DNA structure", "Protein folding", "Membrane structure", "Enzyme binding"],
+                correct: 2
+            },
+            {
+                question: "Phospholipid bilayers are selectively permeable because:",
+                options: ["They repel all molecules", "Nonpolar molecules diffuse easily", "They contain enzymes", "They use ATP"],
+                correct: 1
+            },
+            {
+                question: "Diffusion occurs when molecules move:",
+                options: ["Against a gradient", "Using ATP", "Down a concentration gradient", "Through vesicles"],
+                correct: 2
+            },
+            {
+                question: "Facilitated diffusion requires:",
+                options: ["ATP", "Transport proteins", "Vesicles", "Pumps"],
+                correct: 1
+            },
+            {
+                question: "Osmosis is the diffusion of:",
+                options: ["Solutes", "Ions", "Water", "Proteins"],
+                correct: 2
+            },
+            {
+                question: "A cell placed in a hypertonic solution will:",
+                options: ["Swell", "Burst", "Shrink", "Divide"],
+                correct: 2
+            },
+            {
+                question: "Active transport differs from passive transport because it:",
+                options: ["Uses ATP", "Moves down a gradient", "Requires diffusion", "Uses no proteins"],
+                correct: 0
+            },
+            {
+                question: "Endocytosis is best described as:",
+                options: ["Diffusion", "Vesicle intake", "ATP synthesis", "Ion exchange"],
+                correct: 1
+            },
+            {
+                question: "Phagocytosis involves:",
+                options: ["Fluid intake", "Large particle engulfment", "Protein synthesis", "Ion movement"],
+                correct: 1
+            },
+            {
+                question: "Exocytosis functions to:",
+                options: ["Bring materials into cells", "Remove materials from cells", "Break membranes", "Transport DNA"],
+                correct: 1
+            },
+            {
+                question: "The first law of thermodynamics states that energy:",
+                options: ["Is destroyed", "Is created", "Is conserved", "Is random"],
+                correct: 2
+            },
+            {
+                question: "An exergonic reaction:",
+                options: ["Requires energy input", "Releases energy", "Is anabolic", "Is endothermic"],
+                correct: 1
+            },
+            {
+                question: "ATP stores energy in its:",
+                options: ["Ribose", "Nitrogen base", "Phosphate bonds", "Enzyme site"],
+                correct: 2
+            },
+            {
+                question: "Phosphorylation refers to:",
+                options: ["Removing phosphate", "Adding phosphate", "Breaking ATP", "Forming glucose"],
+                correct: 1
+            },
+            {
+                question: "Enzymes speed reactions by:",
+                options: ["Raising temperature", "Lowering activation energy", "Increasing substrate energy", "Adding ATP"],
+                correct: 1
+            },
+            {
+                question: "Glycolysis occurs in the:",
+                options: ["Mitochondria", "Nucleus", "Cytoplasm", "Chloroplast"],
+                correct: 2
+            },
+            {
+                question: "Cellular respiration's overall purpose is to:",
+                options: ["Produce glucose", "Generate ATP", "Fix carbon", "Release oxygen"],
+                correct: 1
+            },
+            {
+                question: "Oxidation involves:",
+                options: ["Gaining electrons", "Losing electrons", "Gaining protons", "Losing neutrons"],
+                correct: 1
+            },
+            {
+                question: "NADH functions as:",
+                options: ["An enzyme", "An electron carrier", "A sugar", "A lipid"],
+                correct: 1
+            },
+            {
+                question: "The citric acid cycle occurs in the:",
+                options: ["Cytoplasm", "Mitochondrial matrix", "Inner membrane", "Chloroplast"],
+                correct: 1
+            },
+            {
+                question: "Most ATP is produced during:",
+                options: ["Glycolysis", "Citric acid cycle", "Electron transport chain", "Fermentation"],
+                correct: 2
+            },
+            {
+                question: "Chemiosmosis involves:",
+                options: ["Electron transfer", "Proton gradient", "ATP hydrolysis", "CO₂ release"],
+                correct: 1
+            },
+            {
+                question: "Substrate-level phosphorylation occurs during:",
+                options: ["Glycolysis", "ETC only", "Calvin cycle", "Light reactions"],
+                correct: 0
+            },
+            {
+                question: "Fermentation occurs when:",
+                options: ["Oxygen is present", "Oxygen is absent", "Glucose is absent", "ATP is abundant"],
+                correct: 1
+            },
+            {
+                question: "Lactic acid fermentation occurs in:",
+                options: ["Plants", "Yeast", "Muscle cells", "Chloroplasts"],
+                correct: 2
+            },
+            {
+                question: "Photosynthesis converts:",
+                options: ["Chemical energy to heat", "Light energy to chemical energy", "ATP to glucose", "Oxygen to CO₂"],
+                correct: 1
+            },
+            {
+                question: "Producers are organisms that:",
+                options: ["Consume others", "Decompose matter", "Make their own food", "Use ATP only"],
+                correct: 2
+            },
+            {
+                question: "Chloroplasts are found primarily in:",
+                options: ["Roots", "Stems", "Mesophyll cells", "Guard cells"],
+                correct: 2
+            },
+            {
+                question: "Stomata function to:",
+                options: ["Absorb light", "Exchange gases", "Store glucose", "Produce ATP"],
+                correct: 1
+            },
+            {
+                question: "Light reactions occur in the:",
+                options: ["Stroma", "Thylakoid membranes", "Cytoplasm", "Nucleus"],
+                correct: 1
+            },
+            {
+                question: "The light reactions produce:",
+                options: ["CO₂ and glucose", "ATP and NADPH", "Glucose only", "Oxygen only"],
+                correct: 1
+            },
+            {
+                question: "Photophosphorylation produces:",
+                options: ["Glucose", "ATP", "NADH", "CO₂"],
+                correct: 1
+            },
+            {
+                question: "The Calvin cycle occurs in the:",
+                options: ["Thylakoid", "Stroma", "Cytoplasm", "Mitochondria"],
+                correct: 1
+            },
+            {
+                question: "Carbon fixation involves:",
+                options: ["Oxygen", "CO₂", "ATP only", "Water"],
+                correct: 1
+            },
+            {
+                question: "Visible light has wavelengths between:",
+                options: ["200–300 nm", "400–700 nm", "700–900 nm", "1000–1200 nm"],
+                correct: 1
+            },
+            {
+                question: "Shorter wavelengths have:",
+                options: ["Less energy", "More energy", "No photons", "Lower frequency"],
+                correct: 1
+            },
+            {
+                question: "Increased CO₂ contributes to:",
+                options: ["Ozone depletion", "Global warming", "Acid rain only", "Photosystem damage"],
+                correct: 1
+            },
+            {
+                question: "The greenhouse effect occurs because:",
+                options: ["Heat escapes easily", "CO₂ traps heat", "Oxygen absorbs heat", "Water reflects heat"],
+                correct: 1
+            },
+            {
+                question: "Deforestation reduces:",
+                options: ["Respiration", "Photosynthesis", "ATP synthesis", "Fermentation"],
+                correct: 1
+            },
+            {
+                question: "Energy pyramids show that:",
+                options: ["Energy is recycled", "Energy decreases at each level", "Producers have least energy", "Consumers produce energy"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let flaggedQuestions = new Set();
+        let timeRemaining = 60 * 60; // 60 minutes in seconds
+        let timerInterval;
+        let examSubmitted = false;
+        let originalIndices = []; // Track original question numbers after shuffling
+
+        function init() {
+            displayQuestion();
+            startTimer();
+            updateProgress();
+            updateFlaggedList();
+        }
+
+        function displayQuestion() {
+            const container = document.getElementById('question-container');
+            const q = questions[currentQuestion];
+            const isFlagged = flaggedQuestions.has(currentQuestion);
+            
+            container.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestion + 1}</div>
+                    <button class="flag-btn ${isFlagged ? 'flagged' : ''}" onclick="toggleFlag()">
+                        ${isFlagged ? '📌 Flagged' : '📌 Flag'}
+                    </button>
+                </div>
+                <div class="question-text">${q.question}</div>
+                <ul class="options">
+                    ${q.options.map((opt, idx) => `
+                        <li class="option ${answers[currentQuestion] === idx ? 'selected' : ''}" 
+                            onclick="selectAnswer(${idx})">
+                            ${String.fromCharCode(65 + idx)}. ${opt}
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').disabled = currentQuestion === questions.length - 1;
+            updateFlaggedList();
+        }
+
+        function selectAnswer(answerIndex) {
+            if (examSubmitted) return;
+            answers[currentQuestion] = answerIndex;
+            displayQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            timerEl.className = 'timer';
+            if (timeRemaining <= 300) { // 5 minutes
+                timerEl.classList.add('danger');
+            } else if (timeRemaining <= 900) { // 15 minutes
+                timerEl.classList.add('warning');
+            }
+        }
+
+        function toggleFlag() {
+            if (examSubmitted) return;
+            
+            if (flaggedQuestions.has(currentQuestion)) {
+                flaggedQuestions.delete(currentQuestion);
+            } else {
+                flaggedQuestions.add(currentQuestion);
+            }
+            
+            displayQuestion();
+        }
+
+        function updateFlaggedList() {
+            const flaggedList = document.getElementById('flagged-list');
+            const flaggedArray = Array.from(flaggedQuestions).sort((a, b) => a - b);
+            
+            if (flaggedArray.length === 0) {
+                flaggedList.innerHTML = '<div class="no-flagged">No questions flagged yet</div>';
+                return;
+            }
+            
+            flaggedList.innerHTML = flaggedArray.map(qNum => {
+                const isCurrent = qNum === currentQuestion;
+                return `
+                    <div class="flagged-item ${isCurrent ? 'current' : ''}" onclick="goToQuestion(${qNum})">
+                        <span>Question ${qNum + 1}</span>
+                        ${answers[qNum] !== null ? '✓' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function goToQuestion(questionNum) {
+            if (examSubmitted) return;
+            currentQuestion = questionNum;
+            displayQuestion();
+        }
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== null).length;
+            const progress = (answered / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function submitExam(forced = false) {
+            if (examSubmitted) return;
+            
+            if (!forced) {
+                const unanswered = answers.filter(a => a === null).length;
+                if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) {
+                    return;
+                }
+            }
+
+            examSubmitted = true;
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const resultsData = [];
+            
+            questions.forEach((q, idx) => {
+                const userAnswer = answers[idx];
+                const isCorrect = userAnswer === q.correct;
+                const originalNum = originalIndices[idx] + 1;
+                
+                if (isCorrect) {
+                    score++;
+                }
+                
+                resultsData.push({
+                    originalNum: originalNum,
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswer,
+                    correctAnswer: q.correct,
+                    isCorrect: isCorrect,
+                    isUnanswered: userAnswer === null
+                });
+            });
+            
+            // Sort by original question number
+            resultsData.sort((a, b) => a.originalNum - b.originalNum);
+
+            document.getElementById('exam-content').style.display = 'none';
+            const results = document.getElementById('results');
+            results.style.display = 'block';
+            document.getElementById('score').textContent = `${score}/${questions.length}`;
+            document.getElementById('score-text').textContent = 
+                `You answered ${score} out of ${questions.length} questions correctly (${(score/questions.length*100).toFixed(1)}%)`;
+            
+            // Display detailed summary
+            displayDetailedResults(resultsData);
+        }
+
+        function displayDetailedResults(resultsData) {
+            const summaryContainer = document.getElementById('results-summary');
+            
+            summaryContainer.innerHTML = `
+                <h3 style="margin-bottom: 20px; color: #333;">Detailed Question Review</h3>
+                ${resultsData.map((result, idx) => {
+                    const statusClass = result.isUnanswered ? 'unanswered' : (result.isCorrect ? 'correct' : 'incorrect');
+                    const statusText = result.isUnanswered ? 'Unanswered' : (result.isCorrect ? 'Correct ✓' : 'Incorrect ✗');
+                    
+                    const userAnswerText = result.isUnanswered 
+                        ? 'No answer selected' 
+                        : `${String.fromCharCode(65 + result.userAnswer)}. ${result.options[result.userAnswer]}`;
+                    
+                    const correctAnswerText = `${String.fromCharCode(65 + result.correctAnswer)}. ${result.options[result.correctAnswer]}`;
+                    
+                    return `
+                        <div class="summary-item ${statusClass}">
+                            <div class="summary-header">
+                                <span class="summary-question-num">Question ${result.originalNum}</span>
+                                <span class="summary-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="summary-question-text">${result.question}</div>
+                            ${!result.isUnanswered ? `
+                                <div class="summary-answer user">
+                                    <span class="summary-answer-label">Your Answer:</span> ${userAnswerText}
+                                </div>
+                            ` : ''}
+                            ${!result.isCorrect ? `
+                                <div class="summary-answer correct">
+                                    <span class="summary-answer-label">Correct Answer:</span> ${correctAnswerText}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+        // Shuffle questions function
+        function shuffleQuestions() {
+            // Create array of indices with questions
+            const questionPairs = questions.map((q, idx) => ({ question: q, originalIndex: idx }));
+            
+            // Fisher-Yates shuffle algorithm
+            for (let i = questionPairs.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questionPairs[i], questionPairs[j]] = [questionPairs[j], questionPairs[i]];
+            }
+            
+            // Update questions array and store original indices
+            questions.length = 0;
+            originalIndices = [];
+            questionPairs.forEach(pair => {
+                questions.push(pair.question);
+                originalIndices.push(pair.originalIndex);
+            });
+        }
+
+        // Initialize on page load
+        shuffleQuestions();
+        init();
+    </script>
+</body>
+</html>
+
