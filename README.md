@@ -3,7 +3,7 @@
 This repository contains a **mock final exam** created for a Biology Honors class to help students prepare for the real final. The goal of this project is to make studying more engaging and interactive than traditional note review by allowing students to test their understanding and identify areas that need improvement.[web:2]
 
 The mock exam is built in **HTML** and deployed at:  
-**Live site:** https://biofinals.vercel.app/ [web:1]  
+**Live site:** https://biofinals.tiiny.site 
 This makes it easy for anyone to open the exam directly in a browser without cloning the code.
 
 ## Features
